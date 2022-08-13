@@ -2,9 +2,10 @@
   "name": "feibai-wallpapers",
   "private": true,
   "version": "0.0.0",
+  "main": "dist/electron/main.js",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "rimraf dist && vite build && electron-builder",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -22,8 +23,13 @@
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^2.3.3",
+    "electron": "^20.0.1",
+    "electron-builder": "^23.3.3",
+    "electron-devtools-installer": "^3.2.0",
+    "rimraf": "^3.0.2",
     "unplugin-auto-import": "^0.8.8",
     "unplugin-vue-components": "^0.19.6",
-    "vite": "^2.9.9"
+    "vite": "^2.9.9",
+    "vite-plugin-electron": "^0.8.4"
   }
 }

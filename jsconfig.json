@@ -18,10 +18,20 @@
         "src/router/*"
       ]
     },
-    "allowJs": true
+    "allowJs": true,
+    "target": "ES2019",
+    "module": "CommonJS",
+    "esModuleInterop": true,
+    "moduleResolution": "Node",
+    "resolveJsonModule": true,
+    "declaration": true,
+    "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true,
+    "outDir": "dist"
   },
   "exclude": [
     "node_modules",
     "dist"
-  ]
+  ],
+  "include": ["src/**/*.js", "vite.config.js"]
 }

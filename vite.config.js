@@ -6,6 +6,7 @@ import {ElementPlusResolver} from 'unplugin-vue-components/resolvers'
 import IconsResolver from 'unplugin-icons/resolver'
 import Inspect from 'vite-plugin-inspect'
 import Icons from 'unplugin-icons/vite'
+import electron from 'vite-plugin-electron';
 
 import path from 'path'
 
@@ -22,7 +23,7 @@ export default defineConfig({
         }
     },
     server: {
-        host: '0.0.0.0',
+        host: '127.0.0.1',
         port: 5432,//更改启动端口
         // 反向代理
         proxy: {
@@ -45,6 +46,18 @@ export default defineConfig({
     },
     plugins: [
         vue(),
+        // electron的配置
+        electron({
+            main: {
+                entry: 'electron/main.js',
+            },
+            preload: {
+                // Must be use absolute path, this is the limit of rollup
+                input: path.join(__dirname, './electron/preload.js'),
+            },
+            // Enables use of Node.js API in the Renderer-process
+            renderer: {},
+        }),
         // element-plus自动导入
         AutoImport({
 
@@ -70,5 +83,8 @@ export default defineConfig({
             autoInstall: true,
         }),
         Inspect(),
-    ]
+    ],
+    build: {
+        emptyOutDir: false, // 必须配置，否则electron相关文件将不会生成build后的文件
+    },
 })

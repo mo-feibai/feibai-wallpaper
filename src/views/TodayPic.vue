@@ -1,6 +1,6 @@
 <template>
   <div class="todayPic">
-    <div class="back" @contextmenu.native.prevent @mouseover="buttonIsShow= true" @mouseleave="buttonIsShow= false">
+    <div class="back" @mouseover="buttonIsShow= true" @mouseleave="buttonIsShow= false">
       <img src="../assets/computer.svg" class="computer" alt="computer">
       <el-image :src="imgUrl" class="front" alt="pic" fit="fill" :preview-src-list="imgList" :initial-index="1">
         <template #error>
@@ -18,28 +18,37 @@
             enter-active-class="animate__backInLeft"
             leave-active-class="animate__backOutRight"
         >
-          <div v-show="buttonIsShow" key="2">
-            <el-button type="primary" class="button" :icon="Download" circle size="large"
-                       @click="download(imgUrl)" />
-            <el-button type="primary" class="button" :icon="Loading" circle size="large"
-                       @click="loadNextPic" />
+          <div v-show="buttonIsShow" key="2" class="button-group">
+            <button class="button" @click="download(imgUrl)">
+              <svg class="icon" aria-hidden="true">
+                <use xlink:href="#icon-download"></use>
+              </svg>
+            </button>
+
+            <button class="button" @click="loadNextPic">
+              <svg class="icon" aria-hidden="true">
+                <use xlink:href="#icon-next"></use>
+              </svg>
+            </button>
           </div>
           <div v-show="!buttonIsShow" key="1">
             <p class="hitokoto">{{ oneWord.hitokoto }}</p>
             <p class="hitokoto-info">{{ oneWordInfo }}</p>
           </div>
-          </transition-group>
+        </transition-group>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import {useTodayPic} from "@/store/TodayPicStore.js";
-import {Download, Picture as IconPicture,Loading} from '@element-plus/icons-vue'
+import {useTodayPic} from '@/store/TodayPicStore.js';
+import {Picture as IconPicture} from '@element-plus/icons-vue'
 import {computed, ref} from "vue";
-import FileSaver from 'file-saver'
 import '@/assets/fonts/font.css';
+
+// electron中与主线程通信
+const {electronAPI} = window
 
 // 获取图片地址
 const imgUrl = computed(() => {
@@ -59,14 +68,14 @@ const buttonIsShow = ref(false);
 // 下载图片
 const download = (aImgUrl) => {
   if (aImgUrl) {
-    FileSaver.saveAs(aImgUrl, `img_${new Date().getTime()}`);
+    electronAPI.downloadPic(aImgUrl)
   }
 }
 
 // 加载下一张图片
- const loadNextPic = () =>{
-   todayPicStore.getTodayPic()
- }
+const loadNextPic = () => {
+  todayPicStore.getTodayPic()
+}
 
 // 将图片地址封装为列表
 const imgList = computed(() => {
@@ -89,6 +98,14 @@ const oneWordInfo = computed(() => {
   const provenance = oneWord.value.from || 'xx'
   return `--- 【${provenance}】 ${author}`;
 })
+
+//获取屏幕数量
+const screenCount = computed(() => {
+  // 这里为什么没有映射？？不太了解
+  return todayPicStore.$state.screenCount;
+})
+
+
 
 </script>
 
@@ -132,8 +149,21 @@ img {
 }
 
 .button {
-  margin-left: 30%;
-  margin-top:2%;
+  position: relative;
+  top: 18%;
+  bottom: 18%;
+  height: 62%;
+  width: 5.6%;
+  background: #ffffff;
+  border: 2px solid #020709;
+  box-shadow: 0 0 20px;
+  border-radius: 50%;
+}
+
+.button-group {
+  height: 100%;
+  display: flex;
+  justify-content: space-around;
 }
 
 .image-slot {
@@ -176,7 +206,7 @@ img {
 
 .hitokoto {
   margin-top: 1%;
-  font-size: 25px;
+  font-size: 22px;
   text-align: center;
   font-family: FZXingKJWB, serif;
 }

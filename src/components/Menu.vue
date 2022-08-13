@@ -83,12 +83,6 @@ const curFullPath = computed(() => {
   background-color: rgb(229, 208, 140) !important;
 }
 
-.icon {
-  width: 1em; height: 1em;
-  vertical-align: -0.15em;
-  fill: currentColor;
-  overflow: hidden;
-}
 
 .navbar-title{
   margin-left: 10px;
